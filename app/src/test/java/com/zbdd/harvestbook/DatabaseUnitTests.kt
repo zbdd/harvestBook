@@ -1,25 +1,18 @@
 package com.zbdd.harvestbook
 
-import androidx.room.Room
-import androidx.room.withTransaction
-import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zbdd.harvestbook.model.INote
 import com.zbdd.harvestbook.model.INoteRepository
-import com.zbdd.harvestbook.model.room.AppDatabase
-import com.zbdd.harvestbook.model.room.INoteDAO
+import com.zbdd.harvestbook.model.Note
 import com.zbdd.harvestbook.model.room.NoteEntity
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.runBlocking
-import org.junit.After
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.TestInstance
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.robolectric.res.android.ResTable_config
 import java.time.LocalDateTime
 
 /**
@@ -39,6 +32,11 @@ class DatabaseUnitTests {
         noteDao = FakeNoteDAO()
     }
 
+    @AfterEach
+    fun breakdown() {
+        (noteDao as FakeNoteDAO).deleteAll()
+    }
+
     @Test
     fun writeAndReadNote() {
         val note = NoteEntity(
@@ -52,31 +50,70 @@ class DatabaseUnitTests {
         val byId = noteDao.read(1)
         assert(note == byId)
     }
-}
 
-class FakeNoteDAO: INoteDAO {
-    private val noteList: MutableList<NoteEntity> = arrayListOf()
-
-    override fun createRow(vararg noteEntities: NoteEntity) {
-        noteList += noteEntities
+    @Test
+    fun createMultiAndDeleteAll() {
+        val listOfNotes = arrayListOf<NoteEntity>()
+        for(i in 1..5) {
+            noteDao.create(NoteEntity(
+                1,
+                "title101",
+                "this is a short note",
+                LocalDateTime.now().minusDays(5).toString(),
+                LocalDateTime.now().toString()
+            ))
+        }
+        assertThat("NoteDAO ReadAll size incorrect", noteDao.readAll().size == 5)
     }
 
-    override fun readAllRaw(query: SimpleSQLiteQuery): List<NoteEntity> {
+    @Test
+    fun createMultiAndDeleteSpecific() {
+        val listOfNotes = arrayListOf<INote>()
+        for(i in 1..5) {
+            val note = Note(
+                i,
+                "title101",
+                "this is a short note",
+                LocalDateTime.now().minusDays(5).toString(),
+                LocalDateTime.now().toString()
+            )
+            listOfNotes.add(note)
+            noteDao.create(note)
+        }
+        listOfNotes.find { it.id == 3 }?.let { noteDao.delete(it) }
+
+        assertThat("NoteDAO delete 3 failed", noteDao.read(3) == null)
+        assertThat("NoteDAO ReadAll size incorrect", noteDao.readAll().size == 4)
+    }
+}
+
+class FakeNoteDAO: INoteRepository {
+    private val noteList: MutableList<INote> = arrayListOf()
+
+    fun deleteAll() {
+        noteList.clear()
+    }
+
+    override fun create(entry: INote) {
+        noteList.add(entry)
+    }
+
+    override fun readAll(): List<INote> {
         return noteList
     }
 
-    override fun read(id: Int): NoteEntity? {
+    override fun read(id: Int): INote? {
         return noteList.find { it.id == id }
     }
 
-    override fun updateRow(vararg noteEntities: NoteEntity) {
-        noteList.indices.forEach { notePos -> noteEntities.forEach { if (noteList[notePos].id == it.id) noteList[notePos] = it } }
+    override fun update(entry: INote) {
+        val toUpdate = noteList.indices.find { noteList[it].id == entry.id }
+        if (toUpdate != null) noteList[toUpdate] = entry
     }
 
-    override fun deleteRow(vararg noteEntities: NoteEntity) {
-        val toDelete = arrayListOf<Int>()
-        noteList.indices.forEach { notePos -> noteEntities.forEach { if (noteList[notePos].id == it.id) toDelete.add(notePos) } }
-        toDelete.forEach { noteList.removeAt(it) }
+    override fun delete(entry: INote) {
+        val toUpdate = noteList.indices.find { noteList[it].id == entry.id }
+        if (toUpdate != null) noteList.removeAt(toUpdate)
     }
 
 }

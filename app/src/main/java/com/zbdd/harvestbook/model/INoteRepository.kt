@@ -1,6 +1,5 @@
 package com.zbdd.harvestbook.model
 
-import com.zbdd.harvestbook.model.room.NoteEntity
+interface INoteRepository: IBaseRepository<INote> {
 
-interface INoteRepository: IBaseRepository<NoteEntity> {
 }

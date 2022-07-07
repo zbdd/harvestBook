@@ -7,7 +7,7 @@ package com.zbdd.harvestbook.model
  */
 interface IBaseRepository<T> {
     fun create(entry: T)
-    //suspend fun readAll(): List<T>
+    fun readAll(): List<T>
     fun read(id: Int): T?
     fun update(entry: T)
     fun delete(entry: T)

@@ -4,8 +4,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zbdd.harvestbook.MyApplication
-import com.zbdd.harvestbook.model.INoteRepository
-import javax.inject.Inject
 
 @Database(entities = [NoteEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
@@ -31,5 +29,5 @@ abstract class AppDatabase: RoomDatabase() {
         }
     }
 
-    abstract fun getNoteRepo(): INoteDAO
+    abstract fun getNoteDAO(): INoteDAO
 }

@@ -1,8 +1,6 @@
 package com.zbdd.harvestbook.model
 
-import java.time.LocalDateTime
-
-interface INoteModel {
+interface INote {
     val id: Int
     val title: String?
     val content: String?
