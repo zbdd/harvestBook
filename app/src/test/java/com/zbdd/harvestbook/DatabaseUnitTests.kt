@@ -16,9 +16,10 @@ import org.robolectric.annotation.Config
 import java.time.LocalDateTime
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Unit test to confirm INoteRepository interface functions as expected
+ * - with INote adhering objects able to be used in CRUD actions
  *
- * See [testing documentation](http://d.android.com/tools/testing).
+ *  @author Zac Durber
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -53,7 +54,6 @@ class DatabaseUnitTests {
 
     @Test
     fun createMultiAndDeleteAll() {
-        val listOfNotes = arrayListOf<NoteEntity>()
         for(i in 1..5) {
             noteDao.create(NoteEntity(
                 1,
