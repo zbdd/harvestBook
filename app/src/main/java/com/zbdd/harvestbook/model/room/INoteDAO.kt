@@ -6,34 +6,34 @@ import com.zbdd.harvestbook.model.INoteRepository
 
 @Dao
 interface INoteDAO: INoteRepository {
-    override suspend fun create(entry: NoteEntity) {
-        create(entry)
+    override fun create(entry: NoteEntity) {
+        createRow(entry)
     }
 
-    override suspend fun update(entry: NoteEntity) {
-        update(entry)
+    override fun update(entry: NoteEntity) {
+        updateRow(entry)
     }
 
-    override suspend fun delete(entry: NoteEntity) {
-        delete(entry)
+    override fun delete(entry: NoteEntity) {
+        deleteRow(entry)
     }
 
-    suspend fun readAll(): List<NoteEntity> {
+    fun readAll(): List<NoteEntity> {
         return readAllRaw(SimpleSQLiteQuery("SELECT * FROM notes"))
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun create(vararg noteEntities: NoteEntity)
+    fun createRow(vararg noteEntities: NoteEntity)
 
     @RawQuery
-    suspend fun readAllRaw(query: SimpleSQLiteQuery): List<NoteEntity>
+    fun readAllRaw(query: SimpleSQLiteQuery): List<NoteEntity>
 
     @Query("SELECT * FROM notes WHERE id = :id")
-    override suspend fun read(id: Int): NoteEntity?
+    override fun read(id: Int): NoteEntity?
 
     @Update
-    suspend fun update(vararg noteEntities: NoteEntity)
+    fun updateRow(vararg noteEntities: NoteEntity)
 
     @Delete
-    suspend fun delete(vararg noteEntities: NoteEntity)
+    fun deleteRow(vararg noteEntities: NoteEntity)
 }

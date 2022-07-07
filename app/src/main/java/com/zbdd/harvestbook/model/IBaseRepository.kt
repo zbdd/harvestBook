@@ -6,9 +6,9 @@ package com.zbdd.harvestbook.model
  * @author Zac Durber
  */
 interface IBaseRepository<T> {
-    suspend fun create(entry: T)
+    fun create(entry: T)
     //suspend fun readAll(): List<T>
-    suspend fun read(id: Int): T?
-    suspend fun update(entry: T)
-    suspend fun delete(entry: T)
+    fun read(id: Int): T?
+    fun update(entry: T)
+    fun delete(entry: T)
 }

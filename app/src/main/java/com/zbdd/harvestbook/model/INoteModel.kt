@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 interface INoteModel {
     val id: Int
-    val title: String
-    val content: String
-    val dateTime: String
-    val updated: String
+    val title: String?
+    val content: String?
+    val dateTime: String?
+    val updated: String?
 }

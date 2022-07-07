@@ -8,8 +8,8 @@ import com.zbdd.harvestbook.model.INoteModel
 data class NoteEntity (
     @PrimaryKey
     override val id: Int,
-    override val title: String,
-    override val content: String,
-    override val dateTime: String,
-    override val updated: String
+    override var title: String?,
+    override var content: String?,
+    override var dateTime: String?,
+    override var updated: String?
         ): INoteModel
