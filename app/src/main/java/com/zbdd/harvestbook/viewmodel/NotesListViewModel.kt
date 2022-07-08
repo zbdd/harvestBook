@@ -1,11 +1,10 @@
 package com.zbdd.harvestbook.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.zbdd.harvestbook.model.INote
-import com.zbdd.harvestbook.model.INoteRepository
-import com.zbdd.harvestbook.model.Note
-import com.zbdd.harvestbook.model.NoteRepository
+import com.zbdd.harvestbook.model.*
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -18,17 +17,30 @@ class NotesListViewModel @Inject constructor(): ViewModel() {
    private val notes: INoteRepository = NoteRepository()
 
     fun getAllNotes(): List<INote> {
-        for (i in 1..7) {
+        for (i in 0..7) {
             val note = Note(
                 i,
-                "title101",
+                "title10${i}",
                 "this is a short note",
-                LocalDateTime.now().minusDays(i.toLong()).toString(),
-                LocalDateTime.now().toString()
+                convertDateTimeToString(LocalDateTime.now().minusDays(i.toLong())),
+                convertDateTimeToString(LocalDateTime.now().minusDays(i.toLong()))
             )
             notes.create(note)
         }
 
         return notes.readAll()
+    }
+
+    fun dateTimeEnhancer(dateTime:String): String {
+        val now = LocalDateTime.now()
+        val rawDT = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH))
+
+        if (rawDT.year == now.year) {
+            if (rawDT.month == now.month) {
+                if (rawDT.dayOfMonth == now.dayOfMonth) return "Today"
+                if (rawDT.dayOfMonth == now.minusDays(1).dayOfMonth) return "Yesterday"
+            }
+        }
+        return dateTime.substringBefore(" ")
     }
 }
