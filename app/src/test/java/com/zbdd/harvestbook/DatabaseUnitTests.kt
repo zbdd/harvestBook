@@ -26,16 +26,16 @@ import java.time.LocalDateTime
 @Config(manifest = Config.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DatabaseUnitTests {
-    private lateinit var noteDao: INoteRepository
+    private lateinit var fakeNoteRepo: INoteRepository
 
     @Before
     fun setup() {
-        noteDao = FakeNoteDAO()
+        fakeNoteRepo = FakeNoteRepo()
     }
 
     @AfterEach
     fun breakdown() {
-        (noteDao as FakeNoteDAO).deleteAll()
+        (fakeNoteRepo as FakeNoteRepo).deleteAll()
     }
 
     @Test
@@ -47,15 +47,15 @@ class DatabaseUnitTests {
             LocalDateTime.now().minusDays(5).toString(),
             LocalDateTime.now().toString()
         )
-        noteDao.create(note)
-        val byId = noteDao.read(1)
+        fakeNoteRepo.create(note)
+        val byId = fakeNoteRepo.read(1)
         assert(note == byId)
     }
 
     @Test
     fun createMultiAndDeleteAll() {
         for(i in 1..5) {
-            noteDao.create(NoteEntity(
+            fakeNoteRepo.create(NoteEntity(
                 1,
                 "title101",
                 "this is a short note",
@@ -63,7 +63,7 @@ class DatabaseUnitTests {
                 LocalDateTime.now().toString()
             ))
         }
-        assertThat("NoteDAO ReadAll size incorrect", noteDao.readAll().size == 5)
+        assertThat("NoteDAO ReadAll size incorrect", fakeNoteRepo.readAll().size == 5)
     }
 
     @Test
@@ -78,16 +78,42 @@ class DatabaseUnitTests {
                 LocalDateTime.now().toString()
             )
             listOfNotes.add(note)
-            noteDao.create(note)
+            fakeNoteRepo.create(note)
         }
-        listOfNotes.find { it.id == 3 }?.let { noteDao.delete(it) }
+        listOfNotes.find { it.id == 3 }?.let { fakeNoteRepo.delete(it) }
 
-        assertThat("NoteDAO delete 3 failed", noteDao.read(3) == null)
-        assertThat("NoteDAO ReadAll size incorrect", noteDao.readAll().size == 4)
+        assertThat("NoteDAO delete 3 failed", fakeNoteRepo.read(3) == null)
+        assertThat("NoteDAO ReadAll size incorrect", fakeNoteRepo.readAll().size == 4)
+    }
+
+    @Test
+    fun createAndUpdateNote() {
+        val note = Note(
+            1,
+            "title101",
+            "this is a short note",
+            LocalDateTime.now().minusDays(5).toString(),
+            LocalDateTime.now().toString()
+        )
+
+        fakeNoteRepo.create(note)
+        val readNote = fakeNoteRepo.read(1)
+        assertThat("Note not created", note == readNote)
+
+        val updatedNote = Note(
+            1,
+            "changed",
+            "this is an updated note",
+            LocalDateTime.now().minusDays(1).toString(),
+            LocalDateTime.now().toString()
+        )
+        fakeNoteRepo.update(updatedNote)
+        val testNote = fakeNoteRepo.read(1)
+        assertThat("Note not updated", testNote == updatedNote)
     }
 }
 
-class FakeNoteDAO: INoteRepository {
+class FakeNoteRepo: INoteRepository {
     private val noteList: MutableList<INote> = arrayListOf()
 
     fun deleteAll() {
