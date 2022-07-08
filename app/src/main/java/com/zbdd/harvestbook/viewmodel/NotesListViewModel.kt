@@ -1,11 +1,10 @@
 package com.zbdd.harvestbook.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.room.withTransaction
 import com.zbdd.harvestbook.model.INote
-import com.zbdd.harvestbook.model.room.AppDatabase
-import com.zbdd.harvestbook.model.room.NoteEntity
-import kotlinx.coroutines.runBlocking
+import com.zbdd.harvestbook.model.INoteRepository
+import com.zbdd.harvestbook.model.Note
+import com.zbdd.harvestbook.model.NoteRepository
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -16,20 +15,20 @@ import javax.inject.Inject
  */
 class NotesListViewModel @Inject constructor(): ViewModel() {
 
-    private var db: AppDatabase = AppDatabase.getInstance()
+   private val notes: INoteRepository = NoteRepository()
 
     fun getAllNotes(): List<INote> {
-        val note = NoteEntity(
-            1,
-            "title101",
-            "this is a short note",
-            LocalDateTime.now().minusDays(5).toString(),
-            LocalDateTime.now().toString()
-        )
+        for (i in 1..7) {
+            val note = Note(
+                i,
+                "title101",
+                "this is a short note",
+                LocalDateTime.now().minusDays(i.toLong()).toString(),
+                LocalDateTime.now().toString()
+            )
+            notes.create(note)
+        }
 
-        val list = arrayListOf<INote>()
-        val item = runBlocking { db.withTransaction {  db.getNoteDAO().create(note); db.getNoteDAO().read(1) } }
-        if (item != null) list.add(item)
-        return list
+        return notes.readAll()
     }
 }

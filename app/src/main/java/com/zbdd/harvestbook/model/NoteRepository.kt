@@ -2,6 +2,7 @@ package com.zbdd.harvestbook.model
 
 import com.zbdd.harvestbook.model.room.AppDatabase
 import com.zbdd.harvestbook.model.room.NoteEntity
+import kotlinx.coroutines.runBlocking
 
 class NoteRepository: INoteRepository {
     private val DB = AppDatabase.getInstance()
@@ -12,22 +13,22 @@ class NoteRepository: INoteRepository {
     }
 
     override fun create(entry: INote) {
-        dao.create(noteToEntity(entry))
+        runBlocking {  dao.create(noteToEntity(entry)) }
     }
 
     override fun readAll(): List<INote> {
-        return dao.readAll()
+        return runBlocking { dao.readAll() }
     }
 
     override fun read(id: Int): INote? {
-        return dao.read(id)
+        return runBlocking { dao.read(id) }
     }
 
     override fun update(entry: INote) {
-        dao.update(noteToEntity(entry))
+        runBlocking {  dao.update(noteToEntity(entry)) }
     }
 
     override fun delete(entry: INote) {
-        dao.delete(noteToEntity(entry))
+        runBlocking {  dao.delete(noteToEntity(entry)) }
     }
 }
