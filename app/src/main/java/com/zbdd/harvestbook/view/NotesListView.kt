@@ -3,17 +3,21 @@ package com.zbdd.harvestbook.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zbdd.harvestbook.model.INote
@@ -29,6 +33,7 @@ class NotesListView @Inject constructor(): ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             HarvestBookTheme {
                 // A surface container using the 'background' color from the theme
@@ -36,27 +41,69 @@ class NotesListView @Inject constructor(): ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting()
+                    setup()
                 }
             }
         }
     }
 
     @Composable
-    fun Greeting() {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(viewModel.getAllNotes()) {
-                mood -> renderItem(mood)
+    fun setup() {
+        main()
+    }
+
+    @Composable
+    fun main() {
+        val note = viewModel.displayDetail
+        val noteList = viewModel.noteList
+
+        if (note != null) displayDetail(note)
+        else {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                items(noteList) { mood ->
+                    displayItem(mood)
+                }
             }
         }
     }
 
     @Composable
-    fun renderItem(note: INote) {
-        Row (modifier = Modifier.fillMaxWidth(),
+    fun displayDetail(note: INote) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Row {
+                Text(text = note.title.toString(), fontWeight = FontWeight.Bold)
+                Text(
+                    text = viewModel.dateTimeEnhancer(note.updated.toString()),
+                    fontStyle = FontStyle.Italic
+                )
+            }
+            Row {
+                Text(text = note.content.toString())
+                Text(text = note.dateTime.toString(), fontStyle = FontStyle.Italic)
+            }
+            Row {
+                Button(onClick = { viewModel.returnToList(); setContent {  main() } }) {
+                    Text(text = "Close")
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun displayItem(
+        note: INote) {
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray, shape = RoundedCornerShape(15.dp))
+            .padding(all = 15.dp)
+            .clickable(onClick = { setContent { viewModel.setupDetailedView(note); main() } }),
         horizontalArrangement = Arrangement.SpaceEvenly) {
             Text(text = note.title.toString())
             Text(text = viewModel.dateTimeEnhancer(note.updated.toString()))
@@ -67,7 +114,7 @@ class NotesListView @Inject constructor(): ComponentActivity() {
     @Composable
     fun DefaultPreview() {
         HarvestBookTheme {
-            Greeting()
+           // main() {}
         }
     }
 }

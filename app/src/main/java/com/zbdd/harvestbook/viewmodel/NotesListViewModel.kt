@@ -14,9 +14,26 @@ import javax.inject.Inject
  */
 class NotesListViewModel @Inject constructor(): ViewModel() {
 
-   private val notes: INoteRepository = NoteRepository()
+    private val notes: INoteRepository = NoteRepository()
+    var noteList = arrayListOf<INote>()
+    var displayDetail: INote? =  null
 
-    fun getAllNotes(): List<INote> {
+    fun setupDetailedView(note: INote) {
+        displayDetail = note
+        noteList.clear()
+    }
+
+    fun returnToList() {
+        displayDetail = null
+        noteList.addAll(notes.readAll())
+    }
+
+    init {
+        createDemoNotes()
+        noteList.addAll(notes.readAll())
+    }
+
+    fun createDemoNotes() {
         for (i in 0..7) {
             val note = Note(
                 i,
@@ -27,8 +44,11 @@ class NotesListViewModel @Inject constructor(): ViewModel() {
             )
             notes.create(note)
         }
+    }
 
-        return notes.readAll()
+    fun getNote(id: Int) {
+        displayDetail = notes.read(id)
+        println("${displayDetail?.id}")
     }
 
     fun dateTimeEnhancer(dateTime:String): String {
@@ -37,8 +57,8 @@ class NotesListViewModel @Inject constructor(): ViewModel() {
 
         if (rawDT.year == now.year) {
             if (rawDT.month == now.month) {
-                if (rawDT.dayOfMonth == now.dayOfMonth) return "Today"
-                if (rawDT.dayOfMonth == now.minusDays(1).dayOfMonth) return "Yesterday"
+                if (rawDT.dayOfMonth == now.dayOfMonth) return "Today at ${dateTime.substringAfter(" ")}"
+                if (rawDT.dayOfMonth == now.minusDays(1).dayOfMonth) return "Yesterday at ${dateTime.substringAfter(" ")}"
             }
         }
         return dateTime.substringBefore(" ")
