@@ -1,6 +1,8 @@
 # HarvestBook
 A simple notepad app that stores your data locally in an encrypted database.
 
+
+### Editing a Note
 <picture>
 <img src="https://i.imgur.com/ISrVVPI.png" />
 </picture>
@@ -35,7 +37,7 @@ Structure
 MVVM pattern based upon Androids [recommended architecture (simplified)](https://developer.android.com/topic/architecture#recommended-app-arch)
 
 
-### Detailed View
+### Architecture Diagram
 <picture>
 <img src="https://i.imgur.com/AeF4Gcq.png" />
 </picture>
