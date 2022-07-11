@@ -14,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -41,15 +42,32 @@ class NotesListView @Inject constructor(): ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    setup()
+                    Column() {
+                        topRow(
+                            filter1Title = "Title",
+                            filter2Title = "Last Updated",
+                            onFilterClick = {})
+                        main()
+                    }
                 }
             }
         }
     }
 
     @Composable
-    fun setup() {
-        main()
+    fun topRow(
+        filter1Title: String,
+        filter2Title: String,
+        onFilterClick: (Int) -> Unit
+    ) {
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray)
+            .padding(all = 15.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+            Text(text = filter1Title, Modifier.clickable { onFilterClick(0) }, fontWeight = FontWeight.Bold)
+            Text(text = filter2Title, Modifier.clickable { onFilterClick(0) }, fontWeight = FontWeight.Bold)
+        }
     }
 
     @Composable
@@ -60,7 +78,7 @@ class NotesListView @Inject constructor(): ComponentActivity() {
         if (note != null) displayDetail(note)
         else {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 items(noteList) { mood ->
@@ -75,24 +93,19 @@ class NotesListView @Inject constructor(): ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
+                .background(Color.LightGray, shape = RoundedCornerShape(15.dp)),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
                 Text(text = note.title.toString(), fontWeight = FontWeight.Bold)
                 Text(
                     text = viewModel.dateTimeEnhancer(note.updated.toString()),
                     fontStyle = FontStyle.Italic
                 )
-            }
-            Row {
                 Text(text = note.content.toString())
-                Text(text = note.dateTime.toString(), fontStyle = FontStyle.Italic)
-            }
-            Row {
                 Button(onClick = { viewModel.returnToList(); setContent {  main() } }) {
                     Text(text = "Close")
                 }
-            }
         }
     }
 
@@ -114,7 +127,7 @@ class NotesListView @Inject constructor(): ComponentActivity() {
     @Composable
     fun DefaultPreview() {
         HarvestBookTheme {
-           // main() {}
+            main()
         }
     }
 }
