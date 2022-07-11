@@ -13,6 +13,10 @@ Features
  - Encryption provided by [SQLCipher for Android with Room](https://github.com/sqlcipher/android-database-sqlcipher#using-sqlcipher-for-android-with-room)
  - Dependency injection provided by [Android Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 
+`All dependencies are provided in the build.gradle (app) file`
+
+
+### List View
 <picture>
 <img src="https://i.imgur.com/F9BV7dS.png" />
 </picture>
@@ -30,6 +34,8 @@ Structure
 --------
 MVVM pattern based upon Androids [recommended architecture (simplified)](https://developer.android.com/topic/architecture#recommended-app-arch)
 
+
+### Detailed View
 <picture>
 <img src="https://i.imgur.com/AeF4Gcq.png" />
 </picture>
