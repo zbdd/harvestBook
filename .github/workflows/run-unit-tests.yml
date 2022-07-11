@@ -2,7 +2,7 @@ name: Run unit testing
 on: [push]
 jobs:
   Explore-GitHub-Actions:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
@@ -12,4 +12,4 @@ jobs:
           java-version: 18
           distribution: 'adopt'
       - name: Build with Gradle
-        run: gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest
