@@ -6,6 +6,18 @@ import androidx.room.RoomDatabase
 import com.zbdd.harvestbook.MyApplication
 import java.io.File
 
+/**
+ * A singleton instance of a Database wrapper that exposes the available DAO's to any calling
+ * Repositories. The schemas (entities) are defined at the top and we call volatile on the DB variable
+ * so that we are not caching requests/responses and potentially leading to bad-states.
+ * In this instance, we are just creating a file for the DB to be instantiated in/ or if it exists,
+ * reusing it.
+ *
+ * SetInstance was added so that we could still do test doubling however, Hilt + Room + Unit Tests
+ * are a mess.
+ *
+ * @author Zac Durber
+ */
 @Database(entities = [NoteEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
     companion object {

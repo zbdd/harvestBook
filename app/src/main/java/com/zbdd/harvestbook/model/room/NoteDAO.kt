@@ -3,6 +3,15 @@ package com.zbdd.harvestbook.model.room
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 
+/**
+ * The INoteDAO is our interface for translating INoteRepository calls to a database to the
+ * actual implementation of a RoomDatabase using ORM.
+ * Extra functions added because of problems when converting the Kotlin language calls to Java
+ * as we are using Hilt for Dependency Injection.
+ *
+ * @author Zac Durber
+ */
+
 @Dao
 interface INoteDAO {
     suspend fun create(entry: NoteEntity) {

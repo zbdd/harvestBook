@@ -4,6 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.zbdd.harvestbook.model.INote
 
+/**
+ * This is our table schema within a Room Database and allows us to map requests onto an instance
+ *
+ * @author Zac Durber
+ */
 @Entity (tableName = "notes")
 data class NoteEntity (
     @PrimaryKey
