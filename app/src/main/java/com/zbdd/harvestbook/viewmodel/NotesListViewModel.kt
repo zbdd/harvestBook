@@ -41,9 +41,36 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
         noteList.addAll(sorted)
     }
 
-    init {
-        createDemoNotes()
+    fun addNewNote() {
+        val note = Note(
+            noteList.size,
+            "note",
+            "",
+            convertDateTimeToString(LocalDateTime.now()),
+            convertDateTimeToString(LocalDateTime.now())
+        )
+        notes.create(note)
+        displayDetail = note
+    }
+
+    fun saveNote(note: INote) {
+        notes.update(note)
+        getAllNotes()
+    }
+
+    fun getAllNotes() {
+        noteList.clear()
         noteList.addAll(notes.readAll())
+    }
+
+    init {
+        //createDemoNotes()
+        getAllNotes()
+    }
+
+    fun removeNote(note: INote) {
+        notes.delete(note)
+        getAllNotes()
     }
 
     fun createDemoNotes() {

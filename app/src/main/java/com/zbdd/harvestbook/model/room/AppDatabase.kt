@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zbdd.harvestbook.MyApplication
+import java.io.File
 
 @Database(entities = [NoteEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
@@ -14,11 +15,13 @@ abstract class AppDatabase: RoomDatabase() {
         private lateinit var DB: AppDatabase
 
         fun getInstance(): AppDatabase {
+            val file = File(DB_ASSET_FILE)
+
             if (!::DB.isInitialized) setInstance(Room
                 .databaseBuilder(
                     MyApplication.appContext, AppDatabase::class.java,
                     DB_NAME)
-                .createFromAsset(DB_ASSET_FILE)
+                .createFromFile(file)
                 .build())
 
             return DB
