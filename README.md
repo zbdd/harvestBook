@@ -14,6 +14,7 @@ Features
  - Persistence library provided by [Android Jetpack Room](https://developer.android.com/training/data-storage/room)
  - Encryption provided by [SQLCipher for Android with Room](https://github.com/sqlcipher/android-database-sqlcipher#using-sqlcipher-for-android-with-room)
  - Dependency injection provided by [Android Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
+ - Utilising GitHub Actions to run Unit Tests on push [(example)](https://github.com/zbdd/harvestBook/tree/master/.github/workflows)
 
 `All dependencies are provided in the build.gradle (app) file`
 
@@ -39,10 +40,9 @@ MVVM pattern based upon Androids [recommended architecture (simplified)](https:/
 
 ### Architecture Diagram
 <picture>
-<img src="https://i.imgur.com/AeF4Gcq.png" />
+<img src="https://i.imgur.com/Wsstrmo.png" />
 </picture>
 
 Outstanding work
 ---------
  - More unit tests
- - Github Actionsto build and test on push
