@@ -86,6 +86,18 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.3.2"
     testImplementation 'org.robolectric:robolectric:4.7.3'
     testImplementation("com.google.dagger:hilt-android-testing:2.38.1")
+
+    // Security and Authentication dependencies
+    implementation("androidx.security:security-crypto:1.0.0")
+    // For Identity Credential APIs
+    implementation("androidx.security:security-identity-credential:1.0.0-alpha03")
+    // For App Authentication APIs
+    implementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
+    // For App Authentication API testing
+    androidTestImplementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
+    implementation "net.zetetic:android-database-sqlcipher:4.5.0"
+    implementation "androidx.sqlite:sqlite:2.0.1"
+
 }
 // Allow references to generated code
 kapt {

@@ -112,7 +112,7 @@ class NotesListView @Inject constructor() : ComponentActivity() {
                                 displayItem(mood)
                             }
                         }
-                        displayAddButton("Add")
+                        displayAddButton("New")
                     }
                 }
             }
@@ -155,7 +155,7 @@ class NotesListView @Inject constructor() : ComponentActivity() {
             )
             Text(text = note.content.toString())
             Button(onClick = { viewModel.returnToList(); setContent { viewModel.saveNote(note); main() } }) {
-                Text(text = "Close")
+                Text(text = "Save")
             }
         }
     }

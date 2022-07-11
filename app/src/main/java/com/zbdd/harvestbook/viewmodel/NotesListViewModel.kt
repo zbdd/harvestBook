@@ -77,7 +77,8 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
             convertDateTimeToString(LocalDateTime.now())
         )
         notes.create(note)
-        displayDetail = note
+
+        setupDetailedView(note)
     }
 
     /**
