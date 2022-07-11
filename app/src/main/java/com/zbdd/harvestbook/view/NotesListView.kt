@@ -27,6 +27,13 @@ import com.zbdd.harvestbook.viewmodel.NotesListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * NotesListView is the main UI for displaying Notes as a List. The UI is constructed using
+ * the latest Compose libraries and the functions are recalled to update the view upon certain actions.
+ * State is controlled by the injected viewModel NotesListViewModel
+ *
+ * @author Zac Durber
+ */
 @AndroidEntryPoint
 class NotesListView @Inject constructor() : ComponentActivity() {
     @Inject
@@ -40,6 +47,10 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         }
     }
 
+    /**
+     * Displays the top row and enables to ability to click each filter title
+     * to trigger a sorting of the notes list
+     */
     @Composable
     fun topRow(
         filter1Title: String,
@@ -66,6 +77,10 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         }
     }
 
+    /**
+     * Main composable function that enables the applies the theme, surface and general
+     * structure of our list view.
+     */
     @Composable
     fun main() {
         val note = viewModel.displayDetail
@@ -104,6 +119,11 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         }
     }
 
+    /**
+     * Compose function to render a simple add button
+     *
+     * @param title - name of the button
+     */
     @Composable
     fun displayAddButton(
         title: String
@@ -113,6 +133,12 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         }
     }
 
+    /**
+     * Compose function to display a Note in detail - so that a user may edit each individual
+     * field.
+     *
+     * @param note - an instance of an INote we wish to view/edit
+     */
     @Composable
     fun displayDetail(note: INote) {
         Column(
@@ -134,6 +160,12 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         }
     }
 
+    /**
+     * Compose function to render an individual Note row to the screen.
+     * Allows us to click on it to view in detail, or to swipe to the right to dismiss
+     *
+     * @param note - an instance of an INote
+     */
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun displayItem(
@@ -185,6 +217,9 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         )
     }
 
+    /**
+     * Only used in the editor to see UI changes on the fly
+     */
     @Preview(showBackground = true)
     @Composable
     fun DefaultPreview() {
