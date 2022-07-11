@@ -13,6 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -105,7 +108,10 @@ class NotesListView @Inject constructor() : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 5.dp)
-                                .heightIn(0.dp, LocalConfiguration.current.screenHeightDp.times(0.8).dp),
+                                .heightIn(
+                                    0.dp,
+                                    LocalConfiguration.current.screenHeightDp.times(0.8).dp
+                                ),
                             verticalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
                             items(noteList) { mood ->
@@ -141,20 +147,48 @@ class NotesListView @Inject constructor() : ComponentActivity() {
      */
     @Composable
     fun displayDetail(note: INote) {
+
+        var title by rememberSaveable { mutableStateOf(note.title ?: "") }
+        var content by rememberSaveable { mutableStateOf(note.content ?: "") }
+
         Column(
             modifier = Modifier
+                .padding(5.dp)
                 .fillMaxWidth()
                 .background(Color.LightGray, shape = RoundedCornerShape(15.dp)),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = note.title.toString(), fontWeight = FontWeight.Bold)
+
+            TextField(value = title,
+                onValueChange = { title = it },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color.Black,
+                    disabledTextColor = Color.DarkGray,
+                    backgroundColor = Color.LightGray,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent),
+                textStyle = MaterialTheme.typography.h2,
+            placeholder = { Text(text = "Click to change...") })
+
             Text(
                 text = viewModel.dateTimeEnhancer(note.updated.toString()),
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(start = 15.dp)
             )
-            Text(text = note.content.toString())
-            Button(onClick = { viewModel.returnToList(); setContent { viewModel.saveNote(note); main() } }) {
+
+            TextField(value = content,
+                onValueChange = { content = it },colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color.Black,
+                    disabledTextColor = Color.Transparent,
+                    backgroundColor = Color.LightGray,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent),
+                placeholder = { Text(text = "Click to change...") })
+        }
+        Column (horizontalAlignment = Alignment.CenterHorizontally) {
+            Button(onClick = { viewModel.returnToList(); setContent { note.title = title; note.content = content; viewModel.saveNote(note); main() } }) {
                 Text(text = "Save")
             }
         }

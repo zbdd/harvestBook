@@ -1,7 +1,10 @@
 package com.zbdd.harvestbook.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.zbdd.harvestbook.model.*
+import com.zbdd.harvestbook.model.INote
+import com.zbdd.harvestbook.model.INoteRepository
+import com.zbdd.harvestbook.model.Note
+import com.zbdd.harvestbook.model.NoteRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -87,6 +90,7 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
      * @param note - the note we want to save
      */
     fun saveNote(note: INote) {
+        note.updated = convertDateTimeToString(LocalDateTime.now())
         notes.update(note)
         getAllNotes()
     }
@@ -159,4 +163,14 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
         }
         return dateTime.substringBefore(" ")
     }
+}
+
+fun convertDateTimeToString(dateTime: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH)
+    return formatter.format(dateTime)
+}
+
+fun convertStringToDateTime(dateTime: String): LocalDateTime {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH)
+    return LocalDateTime.parse(dateTime, formatter)
 }
