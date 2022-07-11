@@ -36,21 +36,7 @@ class NotesListView @Inject constructor(): ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            HarvestBookTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Column() {
-                        topRow(
-                            filter1Title = "Title",
-                            filter2Title = "Last Updated",
-                            onFilterClick = {})
-                        main()
-                    }
-                }
-            }
+            main()
         }
     }
 
@@ -58,15 +44,15 @@ class NotesListView @Inject constructor(): ComponentActivity() {
     fun topRow(
         filter1Title: String,
         filter2Title: String,
-        onFilterClick: (Int) -> Unit
+        onFilterClick: (String) -> Unit
     ) {
         Row (modifier = Modifier
             .fillMaxWidth()
             .background(Color.LightGray)
             .padding(all = 15.dp),
             horizontalArrangement = Arrangement.SpaceEvenly) {
-            Text(text = filter1Title, Modifier.clickable { onFilterClick(0) }, fontWeight = FontWeight.Bold)
-            Text(text = filter2Title, Modifier.clickable { onFilterClick(0) }, fontWeight = FontWeight.Bold)
+            Text(text = filter1Title, Modifier.clickable { onFilterClick(filter1Title) }, fontWeight = FontWeight.Bold)
+            Text(text = filter2Title, Modifier.clickable { onFilterClick(filter2Title) }, fontWeight = FontWeight.Bold)
         }
     }
 
@@ -75,14 +61,32 @@ class NotesListView @Inject constructor(): ComponentActivity() {
         val note = viewModel.displayDetail
         val noteList = viewModel.noteList
 
-        if (note != null) displayDetail(note)
-        else {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+        HarvestBookTheme {
+            // A surface container using the 'background' color from the theme
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colors.background
             ) {
-                items(noteList) { mood ->
-                    displayItem(mood)
+                Column {
+                    if (viewModel.displayTopRow)
+                        topRow(
+                        filter1Title = "Title",
+                        filter2Title = "Last Updated",
+                        onFilterClick = { viewModel.sortListBy(it); setContent { main() } }
+                    )
+                    if (note != null) displayDetail(note)
+                    else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 5.dp),
+                            verticalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            items(noteList) { mood ->
+                                displayItem(mood)
+                            }
+                        }
+                    }
                 }
             }
         }

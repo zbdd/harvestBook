@@ -16,3 +16,8 @@ fun convertDateTimeToString(dateTime: LocalDateTime): String {
     val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH)
     return formatter.format(dateTime)
 }
+
+fun convertStringToDateTime(dateTime: String): LocalDateTime {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH)
+    return LocalDateTime.parse(dateTime, formatter)
+}

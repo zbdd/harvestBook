@@ -12,20 +12,33 @@ import javax.inject.Inject
  *
  * @author Zac Durber
  */
-class NotesListViewModel @Inject constructor(): ViewModel() {
+class NotesListViewModel @Inject constructor() : ViewModel() {
 
     private val notes: INoteRepository = NoteRepository()
+    var displayTopRow = true
     var noteList = arrayListOf<INote>()
-    var displayDetail: INote? =  null
+    var displayDetail: INote? = null
 
     fun setupDetailedView(note: INote) {
         displayDetail = note
-        noteList.clear()
+        displayTopRow = false
     }
 
     fun returnToList() {
         displayDetail = null
-        noteList.addAll(notes.readAll())
+        displayTopRow = true
+    }
+
+    fun sortListBy(value: String) {
+        val comparator =
+            when (value) {
+                "Title" -> compareBy { note: INote -> note.title }
+                else -> compareBy { note: INote -> convertStringToDateTime(note.updated.toString()) }.reversed()
+            }
+
+        val sorted = noteList.sortedWith(comparator)
+        noteList.clear()
+        noteList.addAll(sorted)
     }
 
     init {
@@ -37,7 +50,7 @@ class NotesListViewModel @Inject constructor(): ViewModel() {
         for (i in 0..7) {
             val note = Note(
                 i,
-                "title10${i}",
+                "title10${7-i}",
                 "this is a short note",
                 convertDateTimeToString(LocalDateTime.now().minusDays(i.toLong())),
                 convertDateTimeToString(LocalDateTime.now().minusDays(i.toLong()))
@@ -51,14 +64,21 @@ class NotesListViewModel @Inject constructor(): ViewModel() {
         println("${displayDetail?.id}")
     }
 
-    fun dateTimeEnhancer(dateTime:String): String {
+    fun dateTimeEnhancer(dateTime: String): String {
         val now = LocalDateTime.now()
-        val rawDT = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH))
+        val rawDT = LocalDateTime.parse(
+            dateTime,
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm", Locale.ENGLISH)
+        )
 
         if (rawDT.year == now.year) {
             if (rawDT.month == now.month) {
                 if (rawDT.dayOfMonth == now.dayOfMonth) return "Today at ${dateTime.substringAfter(" ")}"
-                if (rawDT.dayOfMonth == now.minusDays(1).dayOfMonth) return "Yesterday at ${dateTime.substringAfter(" ")}"
+                if (rawDT.dayOfMonth == now.minusDays(1).dayOfMonth) return "Yesterday at ${
+                    dateTime.substringAfter(
+                        " "
+                    )
+                }"
             }
         }
         return dateTime.substringBefore(" ")
