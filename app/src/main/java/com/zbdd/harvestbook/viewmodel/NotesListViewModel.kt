@@ -19,16 +19,40 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
     var noteList = arrayListOf<INote>()
     var displayDetail: INote? = null
 
+    /**
+     * On initialisation of this instance, fill the notesList with the latest data from the
+     * database
+     *  - the old demo notes function is for testing (manually insert some INotes)
+     */
+    init {
+        //createDemoNotes()
+        getAllNotes()
+    }
+
+    /**
+     * Show a INote and stop displaying the top row
+     *
+     * @param note - the note to display
+     */
     fun setupDetailedView(note: INote) {
         displayDetail = note
         displayTopRow = false
     }
 
+    /**
+     * Stop showing an INote and start showing the top row again
+     */
     fun returnToList() {
         displayDetail = null
         displayTopRow = true
     }
 
+    /**
+     * A quick sort function that'll either use the Title or Updated properties as the comparison
+     * item
+     *
+     * @param value - a string value to determine on what field will we sort by
+     */
     fun sortListBy(value: String) {
         val comparator =
             when (value) {
@@ -41,6 +65,9 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
         noteList.addAll(sorted)
     }
 
+    /**
+     * Create a new note, add it to the DB and then render it to the screen
+     */
     fun addNewNote() {
         val note = Note(
             noteList.size,
@@ -53,26 +80,37 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
         displayDetail = note
     }
 
+    /**
+     * Save any INote updates to the DB
+     *
+     * @param note - the note we want to save
+     */
     fun saveNote(note: INote) {
         notes.update(note)
         getAllNotes()
     }
 
+    /**
+     * Clear the list and refresh it from the DB
+     */
     fun getAllNotes() {
         noteList.clear()
         noteList.addAll(notes.readAll())
     }
 
-    init {
-        //createDemoNotes()
-        getAllNotes()
-    }
-
+    /**
+     * Delete the INote passed in
+     *
+     * @param note to delete
+     */
     fun removeNote(note: INote) {
         notes.delete(note)
         getAllNotes()
     }
 
+    /**
+     * Quick and nasty function to add some INotes to the database
+     */
     fun createDemoNotes() {
         for (i in 0..7) {
             val note = Note(
@@ -86,11 +124,21 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * Retrieve a single INote from the DB by the id field
+     *
+     * @param id - a integer representing a unique INote in the DB
+     */
     fun getNote(id: Int) {
         displayDetail = notes.read(id)
         println("${displayDetail?.id}")
     }
 
+    /**
+     * A little function to change the updated and dateTime text when its close to the current day
+     *
+     * @param dateTime - a string of a valid dateTime that we want to convert
+     */
     fun dateTimeEnhancer(dateTime: String): String {
         val now = LocalDateTime.now()
         val rawDT = LocalDateTime.parse(
