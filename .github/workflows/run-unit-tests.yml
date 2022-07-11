@@ -10,4 +10,4 @@ jobs:
           java-version: 18
           distribution: 'adopt'
       - name: Build with Gradle
-        run: ./gradlew testDebugUnitTest
+        run: gradlew testDebugUnitTest
