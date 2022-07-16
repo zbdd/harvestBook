@@ -11,11 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,9 +83,6 @@ class NotesListView @Inject constructor() : ComponentActivity() {
      */
     @Composable
     fun main() {
-        val note = viewModel.displayDetail
-        val noteList = viewModel.noteList
-
         HarvestBookTheme {
             // A surface container using the 'background' color from the theme
             Surface(
@@ -100,9 +94,9 @@ class NotesListView @Inject constructor() : ComponentActivity() {
                         topRow(
                             filter1Title = "Title",
                             filter2Title = "Last Updated",
-                            onFilterClick = { viewModel.sortListBy(it); setContent { main() } }
+                            onFilterClick = { viewModel.sortListBy(it) }
                         )
-                    if (note != null) displayDetail(note)
+                    if (viewModel.displayDetail.value.id != -1) displayDetail(viewModel.displayDetail)
                     else {
                         LazyColumn(
                             modifier = Modifier
@@ -114,8 +108,8 @@ class NotesListView @Inject constructor() : ComponentActivity() {
                                 ),
                             verticalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(noteList) { mood ->
-                                displayItem(mood)
+                            items(viewModel.noteList) { mood ->
+                                if (mood.id != -1) displayItem(mood)
                             }
                         }
                         displayAddButton("New")
@@ -134,7 +128,7 @@ class NotesListView @Inject constructor() : ComponentActivity() {
     fun displayAddButton(
         title: String
     ) {
-        Button({ viewModel.addNewNote(); setContent { main() } }) {
+        Button({ viewModel.addNewNote() }) {
             Text(text = title)
         }
     }
@@ -146,10 +140,10 @@ class NotesListView @Inject constructor() : ComponentActivity() {
      * @param note - an instance of an INote we wish to view/edit
      */
     @Composable
-    fun displayDetail(note: INote) {
+    fun displayDetail(note: MutableState<INote>) {
 
-        var title by rememberSaveable { mutableStateOf(note.title ?: "") }
-        var content by rememberSaveable { mutableStateOf(note.content ?: "") }
+        var title by rememberSaveable { mutableStateOf(note.value.title ?: "") }
+        var content by rememberSaveable { mutableStateOf(note.value.content ?: "") }
 
         Column(
             modifier = Modifier
@@ -172,7 +166,7 @@ class NotesListView @Inject constructor() : ComponentActivity() {
             placeholder = { Text(text = "Click to change...") })
 
             Text(
-                text = viewModel.dateTimeEnhancer(note.updated.toString()),
+                text = viewModel.dateTimeEnhancer(note.value.updated.toString()),
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier.padding(start = 15.dp)
             )
@@ -188,7 +182,7 @@ class NotesListView @Inject constructor() : ComponentActivity() {
                 placeholder = { Text(text = "Click to change...") })
         }
         Column (horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { viewModel.returnToList(); setContent { note.title = title; note.content = content; viewModel.saveNote(note); main() } }) {
+            Button(onClick = { note.value.title = title; note.value.content = content; viewModel.saveNote(note.value); viewModel.returnToList(); }) {
                 Text(text = "Save")
             }
         }
@@ -208,14 +202,14 @@ class NotesListView @Inject constructor() : ComponentActivity() {
         val swipeState = rememberDismissState(
             confirmStateChange = {
                 if (it == DismissValue.DismissedToEnd) {
-                    viewModel.removeNote(note); setContent { main() }
+                    viewModel.removeNote(note)
                 }
                 true
             }
         )
 
         SwipeToDismiss(modifier = Modifier
-            .clickable(onClick = { setContent { viewModel.setupDetailedView(note); main() } }),
+            .clickable(onClick = { viewModel.setupDetailedView(note) }),
             directions = setOf(DismissDirection.StartToEnd),
             state = swipeState,
             dismissThresholds = { FractionalThreshold(0.6f) },

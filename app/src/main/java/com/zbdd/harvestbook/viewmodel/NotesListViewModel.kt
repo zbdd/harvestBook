@@ -1,5 +1,8 @@
 package com.zbdd.harvestbook.viewmodel
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.zbdd.harvestbook.model.INote
 import com.zbdd.harvestbook.model.INoteRepository
@@ -19,8 +22,9 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
 
     private val notes: INoteRepository = NoteRepository()
     var displayTopRow = true
-    var noteList = arrayListOf<INote>()
-    var displayDetail: INote? = null
+    var noteList = mutableStateListOf<INote>()
+    private val defaultNote = Note(-1,"","","","")
+    var displayDetail: MutableState<INote> = mutableStateOf(defaultNote)
 
     /**
      * On initialisation of this instance, fill the notesList with the latest data from the
@@ -38,7 +42,7 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
      * @param note - the note to display
      */
     fun setupDetailedView(note: INote) {
-        displayDetail = note
+        displayDetail.value = note
         displayTopRow = false
     }
 
@@ -46,7 +50,7 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
      * Stop showing an INote and start showing the top row again
      */
     fun returnToList() {
-        displayDetail = null
+        displayDetail.value = defaultNote
         displayTopRow = true
     }
 
@@ -110,6 +114,7 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
      */
     fun removeNote(note: INote) {
         notes.delete(note)
+        noteList.remove(note)
         getAllNotes()
     }
 
@@ -135,8 +140,7 @@ class NotesListViewModel @Inject constructor() : ViewModel() {
      * @param id - a integer representing a unique INote in the DB
      */
     fun getNote(id: Int) {
-        displayDetail = notes.read(id)
-        println("${displayDetail?.id}")
+        notes.read(id)?.let { displayDetail.value = it }
     }
 
     /**
